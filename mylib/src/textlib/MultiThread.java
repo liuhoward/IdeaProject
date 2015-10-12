@@ -52,11 +52,11 @@ public class MultiThread extends Thread{
         lib.formatObject(dictpath, dictpathout);
         */
 
-        int num_threads = 5;
+        int num_threads = 6;
 
         String dataPath = "../data/review/";
         String srcFile = dataPath + "tripadvisor.json";
-        String destFile = srcFile.replace(".json", "StemOut.json");
+        String destFile = srcFile.replace(".json", "Stem.json");
 
         TextStem textStem = new TextStem();
         textStem.initialWordNetDict();
