@@ -67,50 +67,17 @@ import weka.core.SparseInstance;
 
 public class SparseInstances {
 
-    /** for serialization */
-    static final long serialVersionUID = -19412345060742748L;
-
-    /** The filename extension that should be used for arff files */
     public final static String FILE_EXTENSION = ".sarff";
-
-    /**
-     * The filename extension that should be used for bin. serialized instances
-     * files
-     */
-    public final static String SERIALIZED_OBJ_FILE_EXTENSION = ".bsi";
-
-    /** The keyword used to denote the start of an arff header */
-    public final static String SARFF_RELATION = "@relation";
 
     public final static String SARFF_Attribute = "@attribute";
 
-    /** The keyword used to denote the start of the arff data section */
     public final static String SARFF_DATA = "@data";
 
-    /** The dataset's name. */
-    protected/* @spec_public non_null@ */String m_RelationName;
-
     /** The attribute information. */
-    protected/* @spec_public non_null@ */FastVector m_Attributes;
-  /*
-   * public invariant (\forall int i; 0 <= i && i < m_Attributes.size();
-   * m_Attributes.elementAt(i) != null);
-   */
+    protected FastVector m_Attributes;
 
     /** The instances. */
-    protected/* @spec_public non_null@ */FastVector m_Instances;
-
-    /** The class attribute's index */
-    protected int m_ClassIndex;
-    // @ protected invariant classIndex() == m_ClassIndex;
-
-    /**
-     * The lines read so far in case of incremental loading. Since the
-     * StreamTokenizer will be re-initialized with every instance that is read, we
-     * have to keep track of the number of lines read so far.
-     *
-     */
-    protected int m_Lines = 0;
+    protected FastVector m_Instances;
 
     public SparseInstances(){
 
