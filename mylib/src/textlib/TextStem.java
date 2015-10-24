@@ -188,38 +188,11 @@ public class TextStem {
 
     }
 
-    public String[] tokenize(String sentence) throws Exception {
-        InputStream is = new FileInputStream("../lib/opennlp/apache-opennlp-1.6.0/en-token.bin");
-
-        TokenizerModel model = new TokenizerModel(is);
-
-        Tokenizer tokenizer = new TokenizerME(model);
-
-        String tokens[] = tokenizer.tokenize(sentence);
-
-        is.close();
-
-        return tokens;
-    }
-
-    public String[] sentenceDetect(String s) throws Exception {
-
-
-        InputStream is = new FileInputStream("../lib/opennlp/apache-opennlp-1.6.0/en-sent.bin");
-        SentenceModel model = new SentenceModel(is);
-        SentenceDetectorME sdetector = new SentenceDetectorME(model);
-
-        String sentences[] = sdetector.sentDetect(s);
-
-
-        is.close();
-
-        return sentences;
-    }
-
     public void processDocs(JSONArray reviewArray, String destFile) throws Exception{
 
         float threshold = 0.5f;
+
+        TextUtil util = new TextUtil();
 
         System.out.println(new Date() + "\n");
         System.out.println("start....................\n");
@@ -241,14 +214,14 @@ public class TextStem {
             int missCount = 0;
             int sumCount = 0;
             String[] sentences =
-                    sentenceDetect(review.toLowerCase().replaceAll("[^\\x20-\\x7E]", " "));
+                    util.sentenceDetect(review.toLowerCase().replaceAll("[^\\x20-\\x7E]", " "));
             if(sentences == null){
                 continue;
             }
             StringBuffer sb = new StringBuffer(256);
             String term = null;
             for(int j = 0; j < sentences.length; j++){
-                String[] tokens = tokenize(sentences[j].replaceAll("_|-", " "));
+                String[] tokens = util.tokenize(sentences[j].replaceAll("_|-", " "));
                 if(tokens == null){
                     continue;
                 }
