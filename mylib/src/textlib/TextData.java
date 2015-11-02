@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,10 +22,11 @@ public class TextData {
             return null;
         }
 
+        int mapCap = 65536;
+        HashMap<String, Long> wordsMap = new HashMap<>(mapCap);
+
         TextUtil textUtil = new TextUtil();
-        textUtil.importDict(null);
-        textUtil.importFilterWords(null);
-        Stemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
+        SimpleStem simpleStem = new SimpleStem(textUtil);
         int size = array.size();
         int attDefault = 32768;
         SparseInstances instData = new SparseInstances(attDefault, size * 5);
@@ -37,8 +39,6 @@ public class TextData {
             if(review == null){
                 continue;
             }
-            int missCount = 0;
-            int sumCount = 0;
             String[] sentences =
                     textUtil.sentenceDetect(review.toLowerCase().replaceAll("[^\\x20-\\x7E]", " "));
             if(sentences == null){
@@ -51,21 +51,18 @@ public class TextData {
                 if(tokens == null){
                     continue;
                 }
-                sumCount += tokens.length;
                 for(int k = 0; k < tokens.length; k++){
                     if(tokens[k].isEmpty()){
                         continue;
                     }
-                    term = stemWord(tokens[k].replaceAll("[^A-Za-z0-9]", ""));
-                    if(term == null || term.isEmpty()){
-                        missCount++;
-                        term = (String)stemmer.stem(tokens[k]);
+                    if(textUtil.searchFilterWord(tokens[k])){
+                        continue;
                     }
-                    if(term.matches("^[.,!?:;]") && sb.length() > 1){
-                        sb.deleteCharAt(sb.length() - 1);
+                    term = simpleStem.stem(tokens[k]);
+                    if(wordsMap.containsKey(term)){
+
                     }
-                    sb.append(term);
-                    sb.append(" ");
+
                 }
             }
 
