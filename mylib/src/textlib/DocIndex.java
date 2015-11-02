@@ -12,6 +12,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.xml.soap.Text;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -40,7 +41,7 @@ public class DocIndex {
         IndexWriter indexWriter = new IndexWriter(FSDirectory.open(Paths.get(indexPath)), iwc);
         indexWriter.deleteAll();
 
-        TextStem textStem = new TextStem();
+        TextUtil textUtil = new TextUtil();
 
         long startTime = new Date().getTime();
 
@@ -60,12 +61,12 @@ public class DocIndex {
                 continue;
             }
 
-            String[] tokens = textStem.tokenize(review);
+            String[] tokens = textUtil.tokenize(review);
             if(tokens.length <= TERM_MIN_THRESHOLD){
                 continue;
             }
 
-            String[] sentences = textStem.sentenceDetect(review);
+            String[] sentences = textUtil.sentenceDetect(review);
             //System.out.println(body.toLowerCase() + "\n");
             num_sentence = 0;
 
@@ -114,7 +115,7 @@ public class DocIndex {
         IndexWriter indexWriter = new IndexWriter(FSDirectory.open(Paths.get(indexPath)), iwc);
         indexWriter.deleteAll();
 
-        TextStem textStem = new TextStem();
+        TextUtil textUtil = new TextUtil();
 
         long startTime = new Date().getTime();
 
@@ -132,7 +133,7 @@ public class DocIndex {
                 continue;
             }
 
-            String[] tokens = textStem.tokenize(review);
+            String[] tokens = textUtil.tokenize(review);
             if(tokens.length <= TERM_MIN_THRESHOLD){
                 continue;
             }

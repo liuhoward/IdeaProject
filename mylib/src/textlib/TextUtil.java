@@ -8,8 +8,10 @@ import opennlp.tools.tokenize.TokenizerModel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -22,9 +24,15 @@ public class TextUtil {
     public String filterWordsPath = "../lib/stopwords";
     private int hashMapCapacity = 32768;
     private int hashSetCapacity = 1024;
-    private HashMap<String, String> dictMap = null;
-    private HashSet<String> filterSet = null;
+    public HashMap<String, String> dictMap = null;
+    public HashSet<String> filterSet = null;
 
+    public boolean reset(){
+
+        dictMap = new HashMap<>(hashMapCapacity);
+        filterSet = new HashSet<>(hashSetCapacity);
+        return true;
+    }
 
     public boolean importDict(String dictPath) throws Exception{
 
@@ -112,6 +120,53 @@ public class TextUtil {
         String filterWordsPath = this.filterWordsPath;
 
         return importFilterWords(filterWordsPath);
+    }
+
+    public void importDiffsStopwords() throws Exception{
+        reset();
+        String diffsPath = "../lib/diffs.txt";
+        String stopwordPath = "../lib/stopwords";
+
+        FileInputStream intFile = new FileInputStream(diffsPath);
+        BufferedReader dictReader = new BufferedReader(new InputStreamReader(intFile));
+
+        String tmpLine = dictReader.readLine();
+        while(tmpLine != null){
+
+            String[] keyvalue = tmpLine.split(" ", 2);
+            dictMap.put(keyvalue[0].replaceAll(" ", ""), keyvalue[1].replaceAll(" ", ""));
+
+            tmpLine = dictReader.readLine();
+        }
+        dictReader.close();
+
+        FileInputStream intputFile = new FileInputStream(stopwordPath);
+        BufferedReader stopwordReader = new BufferedReader(new InputStreamReader(intputFile));
+
+        String wordLine = stopwordReader.readLine();
+        while(wordLine != null){
+
+            filterSet.add(wordLine.replaceAll(" ", ""));
+            wordLine = stopwordReader.readLine();
+        }
+        stopwordReader.close();
+    }
+
+    public String searchDictWord(String word){
+        if(word == null || word.isEmpty()){
+            return null;
+        }
+
+        return dictMap.get(word);
+
+    }
+
+    public boolean searchFilterWord(String word){
+        if(word == null || word.isEmpty()){
+            return false;
+        }
+
+        return filterSet.contains(word);
     }
 
 

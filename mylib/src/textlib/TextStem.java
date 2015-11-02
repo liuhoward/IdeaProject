@@ -25,12 +25,14 @@ public class TextStem {
 
     public String WordNetDictPath = "../lib/WordNet_Dict_3.1";
     Dictionary WordNetDict = null;
+    WordnetStemmer wordnetStemmer = null;
     public String hashDictPath = "../lib/hashdict.json";
     public String filterWordsPath = "../lib/stopwords";
     private int hashMapCapacity = 32768;
     private int hashSetCapacity = 1024;
     private HashMap<String, String> dictMap = null;
     private HashSet<String> filterSet = null;
+    private TextUtil textUtil = null;
 
     public void setWordNetDictPath(String dictPath){
         WordNetDictPath = dictPath;
@@ -107,6 +109,10 @@ public class TextStem {
             return false;
         }
 
+        openWordNetDict();
+
+        wordnetStemmer = new WordnetStemmer(WordNetDict);
+
         return true;
     }
 
@@ -120,6 +126,13 @@ public class TextStem {
         return true;
     }
 
+    public boolean closeWordNetDict() throws Exception{
+
+        WordNetDict.close();
+
+        return true;
+    }
+
 
     public String stemWordwithWordNet (String word) throws Exception{
 
@@ -128,7 +141,7 @@ public class TextStem {
             return null;
         }
 
-        WordnetStemmer stemmer = new WordnetStemmer(WordNetDict);
+        WordnetStemmer stemmer = wordnetStemmer;
 
         List<String> term = null;
 
