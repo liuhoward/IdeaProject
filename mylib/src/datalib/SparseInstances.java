@@ -130,9 +130,9 @@ public class SparseInstances {
         m_Instances.addElement(newInstance);
     }
 
-    public void addInstance(/* @non_null@ */Instance instance) {
+    public void addInstance(ESparseInstance instance) {
 
-        SparseInstance newInstance = new SparseInstance(instance);
+        ESparseInstance newInstance = new ESparseInstance(instance);
 
         m_Instances.addElement(newInstance);
     }
