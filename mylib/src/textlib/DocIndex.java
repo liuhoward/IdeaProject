@@ -185,8 +185,8 @@ public class DocIndex {
             return null;
         }
 
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
-        Fields fields = MultiFields.getFields(reader);
+        DirectoryReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
+        Terms terms = SlowCompositeReaderWrapper.wrap(reader).terms("field");
 
         return null;
 
