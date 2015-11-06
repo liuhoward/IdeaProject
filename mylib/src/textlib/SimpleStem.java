@@ -10,27 +10,54 @@ public class SimpleStem {
     private TextUtil textUtil = null;
     private SnowballStemmer stemmer = new SnowballStemmer(SnowballStemmer.ALGORITHM.ENGLISH);
 
-    public SimpleStem() throws Exception{
+    public SimpleStem() throws Exception {
         this.textUtil = new TextUtil();
         textUtil.importDiffsStopwords();
     }
 
-    public SimpleStem(TextUtil util) throws Exception{
+    public SimpleStem(TextUtil util) throws Exception {
         this.textUtil = util;
         textUtil.importDiffsStopwords();
     }
 
-    public String stem(String word){
-        if(word == null || word.isEmpty()){
+    public String stem(String word) {
+        if (word == null || word.isEmpty()) {
             return null;
         }
 
         String term = textUtil.searchDictWord(word);
-        if(term != null){
+        if (term != null) {
             return term;
         }
 
-        term = (String)stemmer.stem(word);
+        term = (String) stemmer.stem(word);
+
+        return term;
+
+    }
+
+    public String stemfilter(String word) {
+        if (word == null || word.isEmpty()) {
+            return null;
+        }
+
+        if (textUtil.searchFilterWord(word)) {
+            return null;
+        }
+
+        String term = textUtil.searchDictWord(word);
+        if (term != null) {
+            if (textUtil.searchFilterWord(term)) {
+                return null;
+            }
+            return term;
+        }
+
+        term = (String) stemmer.stem(word);
+
+        if (textUtil.searchFilterWord(term)) {
+            return null;
+        }
 
         return term;
 
