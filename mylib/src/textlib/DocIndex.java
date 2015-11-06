@@ -1,7 +1,9 @@
 package textlib;
 
+import datalib.ESparseInstance;
 import datalib.SparseInstances;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.StopAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -9,6 +11,7 @@ import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -16,6 +19,7 @@ import javax.xml.soap.Text;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,7 +38,12 @@ public class DocIndex {
             return;
         }
 
-        Analyzer analyzer = new StopAnalyzer(Paths.get(stopwordsFile));
+        Analyzer analyzer = null;
+        if(stopwordsFile == null){
+            analyzer = new SimpleAnalyzer();
+        }else {
+            analyzer = new StopAnalyzer(Paths.get(stopwordsFile));
+        }
 
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -108,7 +117,12 @@ public class DocIndex {
             return;
         }
 
-        Analyzer analyzer = new StopAnalyzer(Paths.get(stopwordsFile));
+        Analyzer analyzer = null;
+        if(stopwordsFile == null){
+            analyzer = new SimpleAnalyzer();
+        }else {
+            analyzer = new StopAnalyzer(Paths.get(stopwordsFile));
+        }
 
         IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
@@ -186,7 +200,57 @@ public class DocIndex {
         }
 
         DirectoryReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
-        Terms terms = SlowCompositeReaderWrapper.wrap(reader).terms("field");
+        Terms terms = SlowCompositeReaderWrapper.wrap(reader).terms(reviewKey);
+
+        int capacity = (int)terms.size();
+        HashMap<String, Integer> wordDict = new HashMap<>(capacity);
+        capacity = capacity > 65535 ? 65535:capacity;
+        SparseInstances instData = new SparseInstances(capacity, reader.numDocs());
+        TermsEnum termsEnum = terms.iterator();
+        int index = 0;
+        BytesRef term = null;
+        String strTerm = null;
+        while((term = termsEnum.next()) != null){
+            strTerm = term.toString();
+            if(termsEnum.totalTermFreq() < threshold){
+                continue;
+            }
+            if(strTerm.isEmpty()){
+                continue;
+            }
+            if(wordDict.get(strTerm) != null){
+                continue;
+            }
+            instData.addAttribute(strTerm);
+            index++;
+        }
+        int numAtt = instData.numAttributes();
+        int numInst = instData.numInstances();
+        Integer attIndex = null;
+        String id = null;
+        int termIndex = 0;
+        for(int docIndex = 0; docIndex < numInst; docIndex++){
+            id = reader.document(docIndex).getField(idKey).stringValue();
+            Terms docTerms = reader.getTermVector(docIndex, reviewKey);
+            if(docTerms == null){
+                continue;
+            }
+            int[] indices = new int[(int)docTerms.size()];
+            double[] attValues = new double[(int)docTerms.size()];
+            termsEnum = docTerms.iterator();
+            termIndex = 0;
+            while((term = termsEnum.next()) != null){
+                strTerm = term.toString();
+                attIndex = wordDict.get(strTerm);
+                if(attIndex == null){
+                    continue;
+                }
+                indices[termIndex] = attIndex.intValue();
+                attValues[termIndex] = termsEnum.totalTermFreq();
+            }
+            ESparseInstance instance = new ESparseInstance(id, 1.0, attValues, indices, numAtt);
+            instData.addInstance(instance);
+        }
 
         return null;
 
