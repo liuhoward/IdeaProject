@@ -12,21 +12,7 @@ import java.util.*;
  */
 public class JSONLib {
 
-    /**
-     * Parse a Json file.
-     */
-    public JSONArray parseJsonFile(String jsonFilePath) throws Exception{
-
-        FileInputStream jsonFile = new FileInputStream(jsonFilePath);
-        Reader readerJson = new InputStreamReader(jsonFile);
-
-        Object fileObj = JSONValue.parse(readerJson);
-        JSONArray arrayObj = (JSONArray) fileObj;
-        return arrayObj;
-
-    }
-
-    public JSONArray parseArrayFile(String filePath) throws Exception{
+    public static JSONArray parseArrayFile(String filePath) throws Exception{
 
         if(filePath == null){
             System.out.println("error: null " + filePath + "\n");
@@ -43,7 +29,7 @@ public class JSONLib {
     }
 
 
-    public JSONObject parseObjectFile(String filePath) throws Exception{
+    public static JSONObject parseObjectFile(String filePath) throws Exception{
 
         if(filePath == null){
             System.out.println("error: null " + filePath + "\n");
@@ -59,7 +45,7 @@ public class JSONLib {
 
     }
 
-    public boolean formatArray(JSONArray array, String destFile) throws Exception{
+    public static boolean formatArray(JSONArray array, String destFile) throws Exception{
 
         System.out.println(new Date() + "\tformat JSON array start\n");
         if(array == null){
@@ -93,7 +79,7 @@ public class JSONLib {
         return true;
     }
 
-    public boolean formatArray(String srcFile, String destFile) throws Exception{
+    public static boolean formatArray(String srcFile, String destFile) throws Exception{
 
         JSONArray array = parseArrayFile(srcFile);
         if(array == null){
@@ -111,7 +97,7 @@ public class JSONLib {
         return true;
     }
 
-    public boolean formatObject(JSONObject object, String destFile) throws Exception{
+    public static boolean formatObject(JSONObject object, String destFile) throws Exception{
 
         System.out.println(new Date() + "\tformat JSON array start\n");
 
@@ -145,7 +131,7 @@ public class JSONLib {
         return true;
     }
 
-    public boolean formatObject(String srcFile, String destFile) throws Exception{
+    public static boolean formatObject(String srcFile, String destFile) throws Exception{
 
         JSONObject object = parseObjectFile(srcFile);
         if(object == null){
