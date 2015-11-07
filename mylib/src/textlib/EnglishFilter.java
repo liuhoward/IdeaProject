@@ -26,7 +26,7 @@ public class EnglishFilter {
     }
 
     /*
-    returns: true      is English or can not judge
+    @return: true      is English or can not judge
              false     is not English
     * */
     public boolean filter(String text) throws Exception {
@@ -39,19 +39,23 @@ public class EnglishFilter {
             return false;
         }
         String term = null;
-        int sumCount = tokens.length;
+        String word = null;
+        int sumCount = 0;
         int missCount = 0;
         for (int k = 0; k < tokens.length; k++) {
-            if (tokens[k].isEmpty()) {
+            if (tokens[k] == null || tokens[k].isEmpty()) {
                 continue;
             }
-            term = stemmer.stemWord(tokens[k].replaceAll("[^A-Za-z0-9]", ""));
+            word = tokens[k].replaceAll("[^A-Za-z0-9]", "");
+            if(word.isEmpty()){
+                continue;
+            }
+            term = stemmer.stemWord(word);
+            sumCount++;
             if (term == null || term.isEmpty()) {
                 missCount++;
             }
-
         }
-
         if (missCount > sumCount * threshold) {
             return false;
         }
