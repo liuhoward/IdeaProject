@@ -18,7 +18,7 @@ public class ReviewFeatures {
 
     public void calFeatures(JSONArray reviewArray, String destFile) throws Exception{
         BufferedWriter reviewOut = new BufferedWriter(new FileWriter(destFile));
-        reviewOut.write("id,numWords,numSentences,avgWordLen,avgSentenceLen,spellingErrors,AutomatedReadabilityIndex\n");
+        //reviewOut.write("id,numWords,numSentences,avgWordLen,avgSentenceLen,spellingErrors,AutomatedReadabilityIndex\n");
         reviewOut.flush();
         TextUtil textUtil = new TextUtil();
         SpellingError spellChecker = new SpellingError();
