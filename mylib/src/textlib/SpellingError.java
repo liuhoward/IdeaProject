@@ -47,4 +47,8 @@ public class SpellingError {
         return count;
     }
 
+    public void close() {
+        speller.close();
+    }
+
 }
