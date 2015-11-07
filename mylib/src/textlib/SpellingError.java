@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class SpellingError {
 
-    private String dictionPath = "/lib/HunspellBridJ/en_US/";
+    private String dictionPath = "../lib/HunspellBridJ/en_US/";
     private Hunspell speller = null;
 
     public SpellingError(){
