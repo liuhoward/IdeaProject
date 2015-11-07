@@ -25,6 +25,7 @@ public class ReviewFeatures {
         StringBuffer sb = null;
         String idKey = "id";
         String reviewKey = "review";
+        int size = 0;
         for (JSONObject jsonObj : (List<JSONObject>) reviewArray) {
             int numWords = 0;
             int numSen = 0;
@@ -74,11 +75,14 @@ public class ReviewFeatures {
             sb.append(String.valueOf(arIndex) + "\n");
 
             reviewOut.write(sb.toString());
+            size++;
         }
         reviewOut.flush();
         reviewOut.close();
 
         spellChecker.close();
+
+        System.out.println(new Date() + "  finished, size: " + size + "\n");
     }
 
     public static void main(String[] args) throws Exception{
