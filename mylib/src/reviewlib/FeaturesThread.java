@@ -92,7 +92,7 @@ public class FeaturesThread extends Thread {
             String line = null;
 
             while ((line = input.readLine()) != null){
-                output.write(line);
+                output.write(line + "\n");
             }
             input = null;
         }
