@@ -63,7 +63,7 @@ public class ReviewFeatures {
                     if(tokens[k] == null){
                         continue;
                     }
-                    String term = tokens[k].replaceAll("[^A-Za-z0-9']", "");
+                    String term = tokens[k].replaceAll("[^A-Za-z0-9]", "");
                     if(term.isEmpty()){
                         continue;
                     }
