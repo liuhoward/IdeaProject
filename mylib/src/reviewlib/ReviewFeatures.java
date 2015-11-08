@@ -10,11 +10,27 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by howard on 11/7/15.
  */
 public class ReviewFeatures {
+
+    private ConcurrentHashMap<String, Boolean> spellMap = null;
+    private int capacity = 262144;
+    public ReviewFeatures() {
+        this.spellMap = new ConcurrentHashMap<>(capacity);
+    }
+
+    public ReviewFeatures(ConcurrentHashMap<String, Boolean> map) {
+        this.spellMap = map;
+    }
+
+    public void exportSpellDict(String destFile) throws Exception{
+        JSONObject obj = new JSONObject(spellMap);
+        JSONLib.formatObject(obj, destFile);
+    }
 
     public void calFeatures(JSONArray reviewArray, String destFile) throws Exception{
         BufferedWriter reviewOut = new BufferedWriter(new FileWriter(destFile));
@@ -23,6 +39,7 @@ public class ReviewFeatures {
         TextUtil textUtil = new TextUtil();
         SpellingError spellChecker = new SpellingError();
         StringBuffer sb = null;
+        boolean ret = true;
         String idKey = "id";
         String reviewKey = "review";
         int size = 0;
@@ -50,7 +67,13 @@ public class ReviewFeatures {
                     if(term.isEmpty()){
                         continue;
                     }
-                    if(!spellChecker.checkSpell(term)){
+                    if(spellMap.containsKey(term)){
+                        ret = spellMap.get(term);
+                    }else {
+                        ret = spellChecker.checkSpell(term);
+                        spellMap.put(term, ret);
+                    }
+                    if(!ret){
                         spellingError++;
                     }
                     tmpTokenNum++;
@@ -101,6 +124,8 @@ public class ReviewFeatures {
 
         ReviewFeatures reviewFeatures = new ReviewFeatures();
         reviewFeatures.calFeatures(reviewArray, destFile);
+
+        reviewFeatures.exportSpellDict("../lib/spellDict.json");
 
         System.out.println(new Date() + "  finished\n");
     }

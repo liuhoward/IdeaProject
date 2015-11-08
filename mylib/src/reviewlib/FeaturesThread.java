@@ -81,6 +81,8 @@ public class FeaturesThread extends Thread {
             e.printStackTrace();
         }
 
+        reviewFeatures.exportSpellDict("../lib/spellDict.json");
+
         BufferedWriter output = new BufferedWriter(new FileWriter(destFile));
         output.write("id,numWords,numSentences,avgWordLen,avgSentenceLen,spellingErrors,AutomatedReadabilityIndex\n");
         BufferedReader input = null;
