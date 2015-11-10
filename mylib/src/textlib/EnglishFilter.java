@@ -56,7 +56,7 @@ public class EnglishFilter {
                 missCount++;
             }
         }
-        if (missCount > sumCount * threshold) {
+        if (sumCount == 0 || missCount > sumCount * threshold) {
             return false;
         }
         return true;
